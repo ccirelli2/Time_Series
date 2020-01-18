@@ -1,0 +1,48 @@
+
+
+1.) 	Consider signal plus noise model of general form xt = st + wt, where wt is Gaussian white
+	noise with var=1. Simulate a plot of n= 200 observations from each of the following
+	two models. 
+
+	st	= signal at time t
+	wt	= white-noise at time t.  I would assume we could use random sampling of
+		  a gaussian dist to obtain wt. 
+
+	a. xt = st + wt for t= 1...200, where
+		st = 0 when t = 1...100
+		   = some formula for t = 100...200	
+		
+		this seems pretty simple.  Lets create 200 white noise observations from 
+		a gaussian distr.  Then for st, it will be 0 for the first 100 observations. 
+		then we create the other 200 by just using the formula given. 
+
+	b.  Its the exact same process, just that the denominator in the equation for st 
+	    has changed. 
+
+	c. Compare the general appearance of the series (a), and (b) with the earth-quake
+	   series and the explosion series.
+
+
+
+2.) 	Consider a process consisting of a linear trend with an additive noise term of independent
+	random variables wt with zero mean and var sigma squared
+	
+	xt = B0 + Bt + wt
+
+	Note this is just the equation of a line with the error term equal to white-noise
+	at time t. 
+
+	a.) show that xt is nonstationary (note:  can calculate mean and covar)
+		question:  Isnt the test to use the mean and cov?  so why question b?  
+		Maybe just plot it?
+	b.) show that the difference series xt = xt = xt-1 is stationary by finding its
+	    mean and autocovaraince.
+	c.) I guess just repeat b with a stationary value, ty
+
+
+3.) 	she's just asking us to use log to remove trend. calculate the smaple ACF and comment. 
+
+
+4.) 	determine the autocovariance and autocorrelation functions of lag h= s-t
+	note:  are we supposed to write the functions?
+	draw the ACG as a function of h (probably just means plot) 
