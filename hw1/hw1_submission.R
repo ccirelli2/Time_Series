@@ -141,13 +141,11 @@ barplot(r, type='bar', names.arg= c('mu_set1', 'mu_set2', 'var_set1', 'var_set2'
                 time series
 '
 
-
-
 # Check Distribution
 hist(y, type='h')  # definitly not gaussian
 
 
-
+# Try taking a random sample of 
 
 
 
