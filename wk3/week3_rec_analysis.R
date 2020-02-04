@@ -1,11 +1,14 @@
 ## analysis of rec series using Yule-Walker esitmation and MLE.
 
 require("astsa")
+?rec
 acf(rec,lag=48)
+?acf2
 acf2(rec, 48) # will produce values and a graphic
 
 
 ####### Yule-walker estimation
+?ar
 rec.yw = ar.yw(rec,order=2)
 rec.yw$x.mean
 rec.yw$ar # coefficients
@@ -31,3 +34,5 @@ PACF = ARMAacf(ar=c(1.5,-.75), ma=0, 24, pacf=TRUE)
 par(mfrow=c(1,2))
 plot(ACF, type="h", xlab="lag", ylim=c(-.8,1)); abline(h=0)
 plot(PACF, type="h", xlab="lag", ylim=c(-.8,1)); abline(h=0)
+
+

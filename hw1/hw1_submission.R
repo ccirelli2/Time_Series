@@ -228,12 +228,17 @@ acf(oil_diff)
   where wt are iid, determine the autocovariance and autocorrelation 
   functions as a function of lag h = s-t and draw the ACF as a function of h
 '
+# Generate Data
+n <- 100
+w = rnorm(n, mean=0, sd=1)
+x <- 0
+for (i in 2:n){
+  x[i] <- w[i-1] + 2*w[i] + w[i + 1]
+}
 
-wt = rnorm(100, 0, 1)
-?rnorm
-
-
-
-
+# Plot Results
+plot(x[1:100], type='l', main='Plot MA Model')
+# Plot ACF
+acf(x[1:90])
 
 
