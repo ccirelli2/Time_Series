@@ -1,7 +1,16 @@
 Source: analyticsvidha
 	Complete tutorial time series modeling
+	https://www.analyticsvidhya.com/blog/2015/12/complete-tutorial-time-series-modeling/
+	https://www.analyticsvidhya.com/blog/2016/02/time-series-forecasting-codes-python/
 
+What is a Time Series:
+- 	Data collected at constant time intervals. 
+- 	Data is time dependent.   So the basic assumption under a linear regression model
+	that the data is independent does not hold. 
 
+Why is Stationarity Important:
+- 	There is a very high probability that if a TS has a constant particular
+	behavior over time that it will be the same in the future. 
 
 
 Difference between AR and MA Models?
@@ -19,7 +28,13 @@ Difference between AR and MA Models?
 
 What is an ACF Plot?
 - 	Plot of the total correlation between different lag functions. 
+
 	For instance, the correlation between x(t) with x(t-1), and x(t) with x(t-2).
+- 	Note that the blue lines 
+
+What is a PACF Plot?
+- 	In the case of the AR model, it looks like we exclude the effect of x(t-1) 
+	when checking the correlation of x(t) and x(t-2).
 
 Determining if AR or MA Process?
 - 	In a moving average series, we will not get any correlation between 
@@ -31,5 +46,49 @@ Determining if AR or MA Process?
 
 
 What Order of AR or MA process do we need to use?
+- 	For an MA process we look for the cut off in the ACF plot. 
+- 	For an AR process we look at the cutt off in the PACF plot.  This cut off
+	would indicate that there is no correlation between x(t) and x(t-n) and hence
+	this would indicate the order of our AR model. 
+- 	Ex:  If we have an AR model, and if the PACF drops off after lag 2 
+	(so the second bar) then we likely have an AR(2) model . 
+- 	According to the second tutorial, 
+
+
+Dickey Fuller Test:
+- 	Can be used to determine if data is stationary. 
+- 	library(tseries)
+- 	adf.test(data, k=0)
+
+Analyzing TS Process & Order of Operations
+1.) 	Vizualize the Time Series:  
+	- Try to vizually see if the time series has seasonality, trend, constant mean and variance. 
+2.) 	Stationarize the series:
+	- Calculate mean and variance over time series.  Ex:  monthplot(ts). 
+	- Constant variance: take log of data. 
+	- Constant mean: take difference or subtract out mean. 
+	- diff(log(ts))
+3.) 	Plot ACF/PACF charts. 
+	- Determine if this is an AR or MA process. 
+	- Determine of what order.  For AR - look for the drop off in the PACF. 
+	  For MA, look for the drop off in the ACF. 
+4.) 	Build ARIMA model
+5.) 	Make predictions. 
+
+
+How to determine the ARIMA model order (p,d,q)?
+-	According to the second tutorial
+	p: the lag value where the PACF chart crosses the upper confidence interval
+	   for the first time. 
+	q: the lag value where the ACF chart crosses the upper confidence interval
+           for the first time. 
+
+
+How to determine best performing model?
+- 	According to Analytics Vidhya, the model with the lowest AIC and BIC
+	should be the choice. 
+
+
+
 
 

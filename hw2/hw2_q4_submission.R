@@ -16,6 +16,7 @@ library(readxl)
 library(plyr)
 library(ggplot2)
 library(astsa)
+library(tseries)
 
 ## DATA PREPARATION --------------------------------------------------------
 
@@ -32,19 +33,26 @@ df.sum
 ggplot(df.sum, aes(x=df.sum$yr_month, y=df.sum$Sales, group=1)) + ggtitle('Monthly Sales - Origianal Data') + 
   xlab('Yr + Month') + ylab('Sales $') + geom_line()
 
-# Take ACF & PACF
-' Hard to tell from the plots.  Looks like an AR process as there is no direct cut off after p(1)'
-acf2(df.sum$Sales)
+# Dickey Fuller Test
+adf.test(df.sum$Sales, k=0) # pvalue < 0.05
 
-# Chec Whether Data is Stationary
+# Check If Mean Constant
 ' Mean is not constant and therefore, the timeseries is not stationary'
 monthplot(df.sum$Sales, main='Monthly Mean')
+
+# ACF & PACF - Original Data
+' ACF Looks like a slow decaying function up to lag=4 & the PACF drops from 0.36 to 0.03 or close to zero. 
+  This looks like an AR(1) process'
+acf2(df.sum$Sales)
 
 # Take diff and log of data
 ' Seems to e centered about the mean now.  Some change in variance'
 diff.sales <- diff(log(df.sum$Sales))
 plot(diff.sales, type='l', main='Monthly Sales - Log of Diff')
 
+# Take ACF & PACF - Differenced Data
+' Interpretation:  This looks like an AR model based on the ACF and order of 2 based on the PACF'
+acf2(diff.sales, max.lag=12)
 
 ## FIT AR MODELS ------------------------------------------------------
 
