@@ -1,0 +1,35 @@
+Source: analyticsvidha
+	Complete tutorial time series modeling
+
+
+
+
+Difference between AR and MA Models?
+- 	The primary difference is based on the correlation between time series
+	objects and different time points. 
+- 	The correlation between x(t) and x(t-n) for n>1 order of MA is always
+	zero.  This directly flows from the fact that covariance between x(t) and 
+	x(t-n) is zero for MA models. 
+- 	On the other hand, with AR models, the covariance beteen x(t) and x(t-n)
+	slowly declines as n gets bigger. 
+- 	MA model depends on the errors(residuals) of the previous forecasts you made
+	to make the current forecasts. 
+	AR depends on lagged values of the data you are modeling to make forecasts. 
+
+
+What is an ACF Plot?
+- 	Plot of the total correlation between different lag functions. 
+	For instance, the correlation between x(t) with x(t-1), and x(t) with x(t-2).
+
+Determining if AR or MA Process?
+- 	In a moving average series, we will not get any correlation between 
+	x(t) and x(t-1). Hence, the the total correlation cuts off at nth lag. 
+- 	In an AR series, the correlation between x(t) and x(t-n) will gradually 
+	decrease as n increases. 
+- 	Therefore, a sharp cutoff in the ACF plot indicates an MA model and a 
+	gradual decrease indicates an AR model. 
+
+
+What Order of AR or MA process do we need to use?
+
+

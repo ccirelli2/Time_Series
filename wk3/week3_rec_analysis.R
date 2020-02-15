@@ -1,5 +1,5 @@
 ## analysis of rec series using Yule-Walker esitmation and MLE.
-
+rm(list=ls())
 require("astsa")
 ?rec
 acf(rec,lag=48)
