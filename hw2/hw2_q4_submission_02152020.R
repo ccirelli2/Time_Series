@@ -28,6 +28,8 @@ sales[c('Sales', 'yr_month')]
 df.sum <- ddply(sales, c('yr_month'), summarize, Sales = sum(Sales))
 df.sum
 
+cycle(df.sum)
+  
 # Plot Monthly Sales
 ' Mean and variance do not appear to be constant'
 ggplot(df.sum, aes(x=df.sum$yr_month, y=df.sum$Sales, group=1)) + ggtitle('Monthly Sales - Origianal Data') + 
