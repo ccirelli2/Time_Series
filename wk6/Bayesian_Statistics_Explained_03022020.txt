@@ -1,0 +1,144 @@
+﻿Introduction to Bayesian Statistics:
+
+Resources:
+	Source:  https://www.analyticsvidhya.com/blog/2016/06/bayesian-statistics-beginners-simple-english/
+	TS:  https://towardsdatascience.com/a-bayesian-approach-to-time-series-forecasting-d97dd4168cb7
+
+
+1.) Frequentist Statistics
+	Tests whether an event (hypothesis) occurs or not.  The approach is to repeat the
+	experiment under the same conditions to obtain the probability of the outcome. 
+
+	Here the sampling distributions are fixed. 
+
+	Ex: determining the probability of obtaining heads for a fair coin. 
+	The frequentist approach is to toss the coin sufficient number of times
+	to obtain the probability. 
+
+	Flaw1:  in the frequentist approach the result is dependent on the number 
+	of time sthe experiment is repeated. 
+
+	Flaw2: two studies with distinct stoping values may get different p-values, which 
+	is undesirable. For different sample sizes we get different t-scores and different 
+	p-values.  The same applies to confidence intervals. 
+
+	Flaw3: (or at least something to note): confidence intervals are not probability distributions
+	, and therefore, they do not provide the most probable value for a parameter. 
+
+2.) Bayesian Statistics:
+	It provides people the tools to update their beliefs in the evidence of new data. 
+	Based on conditional probabilities. 
+	Use Bayes' theorem to compute and update probabilities after obtaining new
+	data. 
+
+
+3) Conditional Probability
+	Definition: The probability of an event A given B equals the probability of B and A 
+		happenning together divided by the probability of B. 
+	Formula:	P(A|B) = P(A⋂B) / P(B)
+		P(B|A) = P(A⋂B) / P(A)
+		P(A|B) = P(B|A) * P(A) / P(B);	
+		*Note that by multiplying P(B|A)*P(A)/1 you get back P(A⋂B).
+	Wiki:	P(A|B)
+		A usually represents a proposition, i.e. a coin lands on heads fifty percent of
+		the time. 
+		B represents the evidence, such as the result of a series of coin tosses. 
+		P(A) is the prior probability of A, which expresses one belief about A before
+		evidence is take into account. 
+		P(B|A) is the likelihood function, which can be interpreted as the probability of
+		the evidence of B given that A is true. 
+		P(A|B) is the posterior probability, the probbaility of the proposition A 
+		after taking the evidence B into account. 
+		P(B) = P(B|A1)(P(A1) + P(B|A2)P(A2) ...Sigma P(B|Ai)P(Ai)
+
+
+	Explanation: 
+		Bayes Theorem comes into effect when multiple events of Ai form an 
+		exhaustive set with another event B, which means that B can be written
+		as the sum of all intersections of B w/ Ai's. 
+
+
+4.) Bayesian Inference:
+	An important aspect of bayesian inference is the establishment of parameters and 
+	models. 
+
+	Models:  are the mathematical formulation of the observed events. 
+	Parameters:  are the factors in the model affecting the observed data. 
+	Ex: fairness of a coin may be defined as a parameter, ex denoted by D
+
+	Which question is correct?
+		What is the probability of 4 heads out of 9 tosses (D), or
+		Given an outcome(D), what is the probability of the coin being fair?
+		According to the tutorial, the second is correct.  The first appears to be a 
+		frequentist approach. 
+
+	fair = θ
+	tosses = D
+	
+	(from wiki)
+	P(H|E) = P(E|H) * P(H) / P(E)
+	alternatively
+	P(θ|D) = P(D|θ) * P(θ) / P(D)
+
+	H	stands for any hypothesis whose probability may be affected by data. 
+		often there are competing hypothesis and the task is to determine which 
+		is the most probable.
+	P(H)	"prior probability", is the estimate of the probability of the hypothesis H before
+		the data E is collected. 
+	E	the evidence, corresponds to the new data that were not used to compute the prior
+		probability (example: flipping the coin). 
+	P(H|E)	the posterior probabilit, is the probability of H given E, i.e. after E is observed 
+	P(E|H)	is the probability of observing E given H, and is called the likelihood. 
+		The likelihood function is a function of the evidence while the posterior probability 
+		is a function of they hypothesis. 
+	P(E)	termined the marginal likelihoodor model evidence. This factor is the same for all
+		hypothesis. 
+
+	Mathematical Models:
+	1.) Log Likelihood
+	2.) Distribution of Prior beliefs
+
+4)	Bernoulli likelihood function
+	1.) Likelihood:	probability of observing a particular number of heads
+			in a particular number of flips for the given fairness coin. 
+			This means that the probability of observing heads/tails
+			depends on the fairness of the coin(θ). 
+	P(y=1 | θ) = θ^y	if the coin i sfair θ=0.5, the probability of observing heads is 0.5. 
+	P(y=0 | θ) = (1-θ)^1-y if the coin is fair, the probability of observing tails is 0.5. 
+
+	P(y|θ) = θ^y * (1-θ) ^ 1-y	called the Bernoulli likelihood function. 	
+	(research further, Bernoulli trials). 
+
+4.2) Prior Belief Distribution
+	This distribution is used to represent our strengths on beliefs about the parameters based
+	on previous experience. Formula is know as beta distribution. 
+	*research beta distribution.  Used to calculate prior belief about theta. 
+
+4.3 Posterior Beleif Distribution
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+					
