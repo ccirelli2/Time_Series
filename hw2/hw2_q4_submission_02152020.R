@@ -18,10 +18,13 @@ library(ggplot2)
 library(astsa)
 library(tseries)
 
+
+
 ## DATA PREPARATION --------------------------------------------------------
 
 # Load Data & Get Monthly Sales
-sales <- read_excel("Desktop/repositories/Time_Series/hw2/sales.xls")
+setwd('/home/ccirelli2/Desktop/repositories/Time_Series/hw2')
+sales <- read_excel("/home/ccirelli2/Desktop/repositories/Time_Series/hw2/sales.xls")
 sales$yr <- format(sales$`Order Date`, format='%Y')
 sales$yr_month <- format(sales$`Order Date`, format='%Y-%m')
 sales[c('Sales', 'yr_month')]

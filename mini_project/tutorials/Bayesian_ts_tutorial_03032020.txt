@@ -1,7 +1,39 @@
-' Bayesian Time Series Tutorial
-  Source:  https://www.youtube.com/watch?v=SW_gbFg1F2w&list=PLWHTeWZGJD5ZOYv3HFsUgQG0CnPRVycbu
-  R implementation = https://www.youtube.com/watch?v=iGTXP55Ic-c&list=PLWHTeWZGJD5ZOYv3HFsUgQG0CnPRVycbu&index=5
-  R package: BSTS'
+Bayesian Time Series Tutorial
+ Source:  https://www.youtube.com/watch?v=SW_gbFg1F2w&list=PLWHTeWZGJD5ZOYv3HFsUgQG0CnPRVycbu
+ R implementation = https://www.youtube.com/watch?v=iGTXP55Ic-c&list=PLWHTeWZGJD5ZOYv3HFsUgQG0CnPRVycbu&index=5
+R package: BSTS
+
+
+Bayes Formula:
+	P(w | m) = P(m | w) * P(w) / P(m)
+
+	w	dogs weight
+	m	measurements of weight
+	P(w)	Is our prior.  This is what we believe about her weight before we put
+		her on the scale. 
+	P(m|w)	Probability given a weight of obtaining a measure is the likelihood 
+	P(w|m)	Posterior probability.  Probability after taking the measurements. 
+	P(m)	Marginal likelihood, which will be a constant in our calculation.  
+
+
+Application
+	P(w)	Assume uniform to begin with. 
+	P(m|w)	Probability of our measurements occuring given our weight. 
+		We want to do this for all the weights. 
+		P(w|m) = P(m|w)
+		P(w=17 |m = [13.9, 14.1, 17.5]) = P(m=[13.9, 14.1, 17.5] | w = 17)
+		Step1: Find the probability of each indv weight occuring and then multiply 
+			them together. 
+			= P(m=13.9 | w = 15) * P(m= 14.1 | w = 15) * P(m=17.5 | w = 15)
+		Step2:  Recalculate for what if she was 14.1 and 17.5. 
+			The maximum is the maximum likelihood. 
+	Prior:	Guess before weight the dog, and based on prior knowledge, that her weight is
+		14.2 pounds.  So you create a normal distribution centered on 14.2. 
+		Bulk is within a pound of 14.2.  So this tells you the prior probability
+
+		We calculate the P(m = 13.9 | w = 17) * P(w=17)
+				 P(m = 14.1 | w = 17) * p(w=17)
+				 P(m = 17.5 | w = 17) * p(w=17)
 
 
 

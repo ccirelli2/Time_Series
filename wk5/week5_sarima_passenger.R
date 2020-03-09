@@ -1,3 +1,4 @@
+rm(list=ls())
 require(astsa)
 
 
@@ -19,11 +20,14 @@ acf2(diff(log(x)),100)
 ## option 1: remove monthly average
 monthplot(diff(log(x)))
 xtrans = diff(log(x))
+AirPassengers
 
 ## get monthly average
+cycle(xtrans)
 monthly = tapply(xtrans, cycle(xtrans), mean)
- 
+monthly 
 xmean = c(monthly[2:12],rep(monthly,11))
+
 
 xx = xtrans - xmean
 
