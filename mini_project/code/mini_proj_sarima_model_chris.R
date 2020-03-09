@@ -15,6 +15,12 @@
   https://machinelearningmastery.com/gentle-introduction-autocorrelation-partial-autocorrelation/
   auto.arima:  https://towardsdatascience.com/time-series-analysis-with-auto-arima-in-r-2b220b20e8ab
   
+  **Note:  https://www.youtube.com/watch?v=pPO5av4HD90 > The plot of the time series for 10-90 depths in this video
+           makes me think tha tthe reason that the time series from 10-90 looks more erratic as it gets closer to 
+           90 is that the light does penetrates less as those layers meaning that it will follow less and less the
+           patter of the layers at the top.  Therefore, we can make an educated guess or assumption at the outset of
+           out model that the deepest layers will have less of a relationship w/ our target variable. 
+  
 '
 
 
@@ -38,7 +44,7 @@ library(tseries)
 library(forecast)
 
 # Import Data -------------------------------------------
-setwd('/home/ccirelli2/Desktop/repositories/Time_Series/mini_project')
+setwd('/home/ccirelli2/Desktop/repositories/Time_Series/mini_project/data')
 data <- read_csv('data.csv')
 
 
@@ -46,7 +52,17 @@ data <- read_csv('data.csv')
 
 # Get Summary Statistics
 summary(data)
-data$startDate # Note that 2018 only has four observations
+data$startDate 
+' Note:  2018 only has 4 observations. 
+         Also, while the days of the month match up between different years, 
+         the day of the month is different from month to month.  This may or may
+         not affect our analysis if their is a trend within months  '
+
+# Modify Columns
+data$SST <- data$`0`
+data$timeIdx <- NULL
+data$`0` <- NULL
+
 
 # Plot 1 - All Levels 
 data.range <- data[4:24,]
@@ -95,19 +111,6 @@ data$month <- month(as.POSIXlt(data$startDate, format="%m-%d-%y"))
 test <- data.frame(data$month, data$`10`)
 plot(x=test$data.month, y=test$data..10., main='Cycles By Month')
 
-# Plot Data By Month - Determine Cycle Periodicity
-data$month <- month(as.POSIXlt(data$startDate, format="%m-%d-%y")) 
-test <- data.frame(data$month, data$`10`)
-plot(x=test$data.month, y=test$data..10., main='Cycles By Month')
-' At Month 8: The Cicle is highest
-  At Month 2: Temperature is at its lowest. 
-  Cycle: Appears to be every 6 months'
-
-# Format Columns
-data$SST <- data$`0`
-data$timeIdx <- NULL
-data$`0` <- NULL
-
 # Create Time Series
 '  Obj: Create a time series of one of the lvls using different cycle values
         The choice of cycles was taken from the exploration of the data'
@@ -138,12 +141,7 @@ monthplot(data$`20`, main='TS - "20" - Mean by Month')
 ' Observation: Not stationary.  Probably requires one 
   non-seasonal difference.'
 
-# Get Moving Average 
-ts.mvavg.2 <- movavg(data$`10`, n=2, type='s')
-ts.mvavg.11 <- movavg(data$`10`, n=11, type='s')
-plot(ts.mvavg.11, type='l', main='Moving Average - N=11')
-
-# Determine if Trend Exist
+# Determine if Trend Exist (Moving Average)
 ts.mvavg.2 <- movavg(ts.data.10.freq11, n=2, type='s')
 ts.mvavg.11 <- movavg(ts.data.10.freq11, n=11, type='s')
 plot(ts.mvavg.11, type='l', main='Moving Average - N=11')
@@ -160,20 +158,44 @@ adf.test(data$`10`, k=0)
 ' p-value= 0.027'
 
 
-# Apply Transformations ----------------------------------
+# Apply Transformations ---------------------------------------------
 ' D = 6, d = 1, log=True'
 ts.D6.d1.log <- diff(diff(log(ts.data.10.freq6), lag=6))
 plot(ts.D6.d1.log, main='TS - Transformed - D=6, d=1, log=True')
 
 ' D = 11, d = 1, log=True'
-ts.D11.d1.log <- diff(diff(log(ts.data.10.freq6), lag=11))
+ts.D11.d1.log <- diff(log(ts.data.10.freq6), lag=11)
 plot(ts.D11.d1.log, main='TS - Transformed - D=11, d=1, log=True')
 
-# Plot ACF & PACF to Determine SARIMA Order --------------
+# Plot ACF & PACF to Determine SARIMA Order ------------------------
 acf2(ts.D6.d1.log)
 acf2(ts.D11.d1.log)
+' ACF:  The ACF appears to indicate a seasonal AR process.
+        The seasonal component of the PACF indicates a seasonal AR process of 2 or 3. 
+        The non-seasonal aspect of the ACF appears also to be an AR process of order 1. 
+        Differencing should probably be 1
+        Season should be 11.' 
+         
+# Train Sarima Model - Manually Select Orders -----------------------
 
+s1 <- sarima(data$`10`, 2,0,1,1,1,1,11)
+s2 <- sarima(data$`10`, 2,1,1,0,0,0,11)
 
+s1$fit
+s2$fit
+' Ljung-Box test: tries to reject the independence of some values. 
+  If p-value < 0.05, you can reject the null hypothesis, i.e. there is dependence. 
+  If p-value > 0.05, you fail to reject the null-hyp and assume independnece
+  source:  https://online.stat.psu.edu/stat510/lesson/3/3.2.
+  
+  Observations:  The model suggested by auto.arima does not perform well using the
+  sarima function.  Based on our investigation of the data, our intuition tells us 
+  that there is a seasonal component to our data.  Indeed, the following order for the
+  sarima model performed best in terms of AIC, Ljung-Box statistic and QQ plot measures
+  (2,0,1,1,1,1,11), which is a non-seasonal AR(2) model w/ zero differencing, non-seasonal
+  MA(1) model, seasonal AR(1) model, seasonal MA(1) model, 1 seasonal difference and 
+  a cycle of 11. '
+ 
 # Identifying Optimal SARIMA Parameters - Auto.Arima ----------------
 ' https://stackoverflow.com/questions/56192723/how-to-automate-sarima-model-for-time-series-forecasting
   Auto.Arima = https://towardsdatascience.com/time-series-analysis-with-auto-arima-in-r-2b220b20e8ab
@@ -242,16 +264,33 @@ plot(aa.pred.64, main='Prediction - 128 Additional Values')
                  As expected, when the periods get larger, the forecast regresses to a constant mean'
 
 
+# Multivariant Time Series Prediction Model -----------------------------------
 
+# Prepare Columns
+data$month <- NULL
+data$startDate <- NULL
+# Plot Data
 
+ts.mtv <- ts(data[2:10])
+autoplot(ts.mtv)
+plot(ts.mtv)
 
+# Compute Cross-Covariance of Two Univariate Time Series
+' References: 
+  https://en.wikipedia.org/wiki/Cross-correlation
+'
+ts.mtv.target <- data$SST
 
+# Iterate Columns - Calculate Correlation Between Each Column & Target
 
-
-
-
-
-
+cor.list <- c()
+for (i in colnames(data[1:9])){
+  cor.n <- cor(ts.mtv.target, data[i])
+  print(cor.n[1])
+  cor.list[[i]] <- cor.n[1]
+  
+  }
+plot(cor.list)
 
 
 

@@ -5,7 +5,7 @@ require(astsa)
 ##  Rec vs SOI series
 ##
 #################################
-
+?ccf
 plot(rec)
 ccf(soi,rec)
 cor(rec[-(1:6)],soi[-(448:453)])
