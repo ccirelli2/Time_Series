@@ -42,6 +42,7 @@ library(lubridate)
 library(reshape)
 library(tseries)
 library(forecast)
+library(dplyr)
 
 # Import Data -------------------------------------------
 setwd('/home/ccirelli2/Desktop/repositories/Time_Series/mini_project/data')
@@ -62,6 +63,13 @@ data$startDate
 data$SST <- data$`0`
 data$timeIdx <- NULL
 data$`0` <- NULL
+
+# Create Time Series
+'  Obj: Create a time series of one of the lvls using different cycle values
+        The choice of cycles was taken from the exploration of the data'
+ts.data.10.freq1  <- ts(data$`10`, frequency=1)
+ts.data.10.freq6 <- ts(data$`10`, frequency=6)
+ts.data.10.freq11 <- ts(data$`10`, frequency=11)
 
 
 # Plot 1 - All Levels 
@@ -111,15 +119,9 @@ data$month <- month(as.POSIXlt(data$startDate, format="%m-%d-%y"))
 test <- data.frame(data$month, data$`10`)
 plot(x=test$data.month, y=test$data..10., main='Cycles By Month')
 
-# Create Time Series
-'  Obj: Create a time series of one of the lvls using different cycle values
-        The choice of cycles was taken from the exploration of the data'
-ts.data.10.freq1  <- ts(data$`10`)
-ts.data.10.freq11 <- ts(data$`10`, frequency=11)
-ts.data.10.freq6 <- ts(data$`10`, frequency=6)
 
 
-# Check for Stationarity & Determine Seasonality---------------------------
+# Check for Stationarity & Determine Seasonality-----------------------------------
 
 # Plot Data
 plot(ts.data.10.freq1, main='TS Plot - Lvl 10 - Freq 1')
@@ -149,54 +151,42 @@ plot(ts.mvavg.11, type='l', main='Moving Average - N=11')
   a single non-seasonal differencing may be in order. '
 
 # Is Varaince Constant?
-plot(ts.data.10.freq11)
-' Variance appears to be constant.  Log of data may not
-  be necessary. '
+ts.10.mean <- mean(ts.data.10.freq11)
+df.var <- data.frame(rep(ts.10.mean, length(ts.data.10.freq11)))
+names(df.var)[names(df.var) == 'rep.ts.10.mean..length.ts.data.10.freq11..'] <- 'TS.Mean'
+df.var$Lvl10 <- ts.data.10.freq11
+df.var$month <- month(as.POSIXlt(data$startDate, format="%m-%d-%y")) 
+df.var$var <- (ts.data.10.freq11 - ts.10.mean)^2
+df.var.by.month <- group_by(df.var, df.var$month)
+df.groupby.month <- aggregate(df.var, list(df.var$month), FUN=mean)
+plot(df.groupby.month$var, type='l', main="TS Variance By Month")
 
 # Dickey Fuller Test 
-adf.test(data$`10`, k=0)
-' p-value= 0.027'
+adf.test(data$`10`, k=11)
+      ' p-value= 0.027
+    reject null hypothesis that data is stationary'
 
 
 # Apply Transformations ---------------------------------------------
 ' D = 6, d = 1, log=True'
-ts.D6.d1.log <- diff(diff(log(ts.data.10.freq6), lag=6))
+ts.D6.d1.log <- diff(log(ts.data.10.freq6), lag=6)
 plot(ts.D6.d1.log, main='TS - Transformed - D=6, d=1, log=True')
 
 ' D = 11, d = 1, log=True'
 ts.D11.d1.log <- diff(log(ts.data.10.freq6), lag=11)
 plot(ts.D11.d1.log, main='TS - Transformed - D=11, d=1, log=True')
 
-# Plot ACF & PACF to Determine SARIMA Order ------------------------
+# Plot ACF & PACF to Determine SARIMA Order -------------------------------
 acf2(ts.D6.d1.log)
 acf2(ts.D11.d1.log)
-' ACF:  The ACF appears to indicate a seasonal AR process.
+  ' ACF:  The ACF appears to indicate a seasonal AR process.
         The seasonal component of the PACF indicates a seasonal AR process of 2 or 3. 
         The non-seasonal aspect of the ACF appears also to be an AR process of order 1. 
         Differencing should probably be 1
         Season should be 11.' 
          
-# Train Sarima Model - Manually Select Orders -----------------------
-
-s1 <- sarima(data$`10`, 2,0,1,1,1,1,11)
-s2 <- sarima(data$`10`, 2,1,1,0,0,0,11)
-
-s1$fit
-s2$fit
-' Ljung-Box test: tries to reject the independence of some values. 
-  If p-value < 0.05, you can reject the null hypothesis, i.e. there is dependence. 
-  If p-value > 0.05, you fail to reject the null-hyp and assume independnece
-  source:  https://online.stat.psu.edu/stat510/lesson/3/3.2.
-  
-  Observations:  The model suggested by auto.arima does not perform well using the
-  sarima function.  Based on our investigation of the data, our intuition tells us 
-  that there is a seasonal component to our data.  Indeed, the following order for the
-  sarima model performed best in terms of AIC, Ljung-Box statistic and QQ plot measures
-  (2,0,1,1,1,1,11), which is a non-seasonal AR(2) model w/ zero differencing, non-seasonal
-  MA(1) model, seasonal AR(1) model, seasonal MA(1) model, 1 seasonal difference and 
-  a cycle of 11. '
  
-# Identifying Optimal SARIMA Parameters - Auto.Arima ----------------
+# Identifying Optimal SARIMA Parameters - Auto.Arima -----------------------
 ' https://stackoverflow.com/questions/56192723/how-to-automate-sarima-model-for-time-series-forecasting
   Auto.Arima = https://towardsdatascience.com/time-series-analysis-with-auto-arima-in-r-2b220b20e8ab
   - Webpage says that the auto.arima helps to implement Regression model with ARIMA errors. 
@@ -216,15 +206,21 @@ barplot(aa.aic.results, names.arg = c('freq1', 'freq6', 'freq11'), main='AIC Res
 
 # Step3:  Train / Test Split
 ' Note:  We are using the actual data here without transformations'
-num.train <- floor(length(data$`10`) * 0.7)
-ts.train <- data$`10`[1:num.train]
-ts.test <- data$`10`[ (num.train+1) : length(data$`10`)]
+num.train <- floor(length(ts.data.10.freq11) * 0.7)
+ts.train <- ts.data.10.freq11[1:num.train]
+ts.test <- ts.data.10.freq11[ (num.train+1) : length(ts.data.10.freq11)]
 
 # Fit Auto.Arima model & Make Predictions ------------------------------
 
-# Fit Model
-aa.fit.1 <- auto.arima(ts.train)
-summary(aa.fit)
+# Fit Model - Use Entire Dataset
+aa.fit.1 <- auto.arima(ts.data.10.freq11, trace=TRUE, ic='bic')
+summary(aa.fit.1)
+aa.pred.1 <- forecast(aa.fit.1, length(ts.test))
+print(paste('Model ->', aa.pred.1$model))
+
+# Fit Model 
+aa.fit.1 <- auto.arima(ts.train, trace=TRUE, ic='bic')
+summary(aa.fit.1)
 aa.pred.1 <- forecast(aa.fit.1, length(ts.test))
 print(paste('Model ->', aa.pred.1$model))
 
@@ -233,7 +229,9 @@ plot(aa.pred.1$residuals, main='Prediction Residuals')
 qqnorm(aa.pred.1$residuals)
 ' Note:  Best fit model = (ar1, ar2, ma1) or (p,d,q) = (2,1,1)
          Not clear why it does not provide the seasona components 
-         of the process
+         of the process.  If we use the entire ts data set as opposed
+         to just the test data, the model suggest an additional sar(1)
+         process.
          Residuals look normal, which gives evidence that our model 
          is preddy good.'
 
@@ -263,6 +261,36 @@ plot(aa.pred.64, main='Prediction - 128 Additional Values')
 ' Observations:  Model does a pretty good job of capturing the seasonal trends of the original time-series
                  As expected, when the periods get larger, the forecast regresses to a constant mean'
 
+# Train Sarima Model - Manually Select Orders -----------------------
+
+# Fit Model To Training Data
+s1.fit <- sarima(ts.train, 2,0,1,2,1,1,11)
+s2.fit <- sarima(ts.train, 2,1,1,0,0,0,11)
+
+# Generate Prediction For Test Data
+s1.pred <- forecast(s1.fit, h= 48)
+
+
+s1.pred.48
+
+s1$fit
+s2$fit
+' Ljung-Box test: tries to reject the independence of some values. 
+  If p-value < 0.05, you can reject the null hypothesis, i.e. there is dependence. 
+  If p-value > 0.05, you fail to reject the null-hyp and assume independnece
+  source:  https://online.stat.psu.edu/stat510/lesson/3/3.2.
+  
+  Observations:  The model suggested by auto.arima does not perform well using the
+  sarima function.  Based on our investigation of the data, our intuition tells us 
+  that there is a seasonal component to our data.  Indeed, the following order for the
+  sarima model performed best in terms of AIC, Ljung-Box statistic and QQ plot measures
+  (2,0,1,1,1,1,11), which is a non-seasonal AR(2) model w/ zero differencing, non-seasonal
+  MA(1) model, seasonal AR(1) model, seasonal MA(1) model, 1 seasonal difference and 
+  a cycle of 11. '
+
+# Compare MSE of Maunual vs Auto.Arima Model -----------------------------
+
+
 
 # Multivariant Time Series Prediction Model -----------------------------------
 
@@ -274,6 +302,7 @@ data$startDate <- NULL
 ts.mtv <- ts(data[2:10])
 autoplot(ts.mtv)
 plot(ts.mtv)
+
 
 # Compute Cross-Covariance of Two Univariate Time Series
 ' References: 
@@ -291,12 +320,6 @@ for (i in colnames(data[1:9])){
   
   }
 plot(cor.list)
-
-
-
-
-
-
 
 
 
