@@ -43,11 +43,11 @@ library(reshape)
 library(tseries)
 library(forecast)
 library(dplyr)
+install.packages("LSTS")
 
 # Import Data -------------------------------------------
 setwd('/home/ccirelli2/Desktop/repositories/Time_Series/mini_project/data')
 data <- read_csv('data.csv')
-
 
 # Data Exploration --------------------------------------
 
@@ -206,9 +206,46 @@ barplot(aa.aic.results, names.arg = c('freq1', 'freq6', 'freq11'), main='AIC Res
 
 # Step3:  Train / Test Split
 ' Note:  We are using the actual data here without transformations'
-num.train <- floor(length(ts.data.10.freq11) * 0.7)
+num.train <- floor(length(ts.data.10.freq11) * 0.8)
 ts.train <- ts.data.10.freq11[1:num.train]
 ts.test <- ts.data.10.freq11[ (num.train+1) : length(ts.data.10.freq11)]
+
+
+
+# Train Sarima Model - Manually Select Orders -----------------------
+
+# Fit Model To Training Data
+s.arima.1 <- arima(ts.train, order=c(1,1,0), seasonal = list(order=c(2,1,0), period=11), )
+s.arima.2 <- arima(ts.train, order=c(1,1,0), seasonal = list(order=c(2,1,0), period=11))
+s.arima.3 <- arima(ts.train, order=c(1,1,0), seasonal = list(order=c(2,1,0), period=11))
+
+# Generate Prediction For Test Data
+s.arima.pred.32 <- predict(s.arima.1, length(ts.test)) 
+df.pred.32 <- data.frame(s.arima.pred.32$pred, ts.test)
+
+ggplot(df.pred.32, aes(s.arima.pred.32, x=index(df.pred.32))) + geom_line(aes(y=df.pred.32$s.arima.pred.32.pred, colour='red')) + 
+  geom_line(aes(y=df.pred.32$ts.test, colour='green')) + ggtitle('ARIMA(1,1,0)x(2,1,0) - Prediction vs Test')
+
+# Calculate MSE 
+s.arima.pred.32.mse <- sum(ts.test - df.pred.32$s.arima.pred.32.pred)^2
+s.arima.pred.32.mse
+
+
+' Ljung-Box test: tries to reject the independence of some values. 
+  If p-value < 0.05, you can reject the null hypothesis, i.e. there is dependence. 
+  If p-value > 0.05, you fail to reject the null-hyp and assume independnece
+  source:  https://online.stat.psu.edu/stat510/lesson/3/3.2.
+  
+  Observations:  The model suggested by auto.arima does not perform well using the
+  sarima function.  Based on our investigation of the data, our intuition tells us 
+  that there is a seasonal component to our data.  Indeed, the following order for the
+  sarima model performed best in terms of AIC, Ljung-Box statistic and QQ plot measures
+  (2,0,1,1,1,1,11), which is a non-seasonal AR(2) model w/ zero differencing, non-seasonal
+  MA(1) model, seasonal AR(1) model, seasonal MA(1) model, 1 seasonal difference and 
+  a cycle of 11. '
+
+
+
 
 # Fit Auto.Arima model & Make Predictions ------------------------------
 
@@ -217,6 +254,18 @@ aa.fit.1 <- auto.arima(ts.data.10.freq11, trace=TRUE, ic='bic')
 summary(aa.fit.1)
 aa.pred.1 <- forecast(aa.fit.1, length(ts.test))
 print(paste('Model ->', aa.pred.1$model))
+
+# Fit Model Arima Using Auto.Arima Model Output
+s.arima.4 <- arima(ts.train, order=c(1,0,0), seasonal = list(order=c(2,1,0), period=11), )
+sarima(ts.train, 1,0,0,2,1,0,11)
+s.arima.4.pred.32 <- predict(s.arima.4, length(ts.test)) 
+df.pred.4.32 <- data.frame(s.arima.4.pred.32$pred, ts.test)
+s.arima.pred.4.32.mse <- sum(ts.test - df.pred.4.32$s.arima.4.pred.32.pred)^2
+s.arima.pred.4.32.mse
+summary(s.arima.4)
+qqnorm(s.arima.4$residuals)
+plot(Box.test(s.arima.4$residuals))
+
 
 # Fit Model 
 aa.fit.1 <- auto.arima(ts.train, trace=TRUE, ic='bic')
@@ -260,34 +309,6 @@ plot(aa.pred.48, main='Prediction - 64 Additional Values')
 plot(aa.pred.64, main='Prediction - 128 Additional Values')
 ' Observations:  Model does a pretty good job of capturing the seasonal trends of the original time-series
                  As expected, when the periods get larger, the forecast regresses to a constant mean'
-
-# Train Sarima Model - Manually Select Orders -----------------------
-
-# Fit Model To Training Data
-s1.fit <- sarima(ts.train, 2,0,1,2,1,1,11)
-s2.fit <- sarima(ts.train, 2,1,1,0,0,0,11)
-
-# Generate Prediction For Test Data
-s1.pred <- forecast(s1.fit, h= 48)
-
-
-s1.pred.48
-
-s1$fit
-s2$fit
-' Ljung-Box test: tries to reject the independence of some values. 
-  If p-value < 0.05, you can reject the null hypothesis, i.e. there is dependence. 
-  If p-value > 0.05, you fail to reject the null-hyp and assume independnece
-  source:  https://online.stat.psu.edu/stat510/lesson/3/3.2.
-  
-  Observations:  The model suggested by auto.arima does not perform well using the
-  sarima function.  Based on our investigation of the data, our intuition tells us 
-  that there is a seasonal component to our data.  Indeed, the following order for the
-  sarima model performed best in terms of AIC, Ljung-Box statistic and QQ plot measures
-  (2,0,1,1,1,1,11), which is a non-seasonal AR(2) model w/ zero differencing, non-seasonal
-  MA(1) model, seasonal AR(1) model, seasonal MA(1) model, 1 seasonal difference and 
-  a cycle of 11. '
-
 # Compare MSE of Maunual vs Auto.Arima Model -----------------------------
 
 
@@ -308,6 +329,10 @@ plot(ts.mtv)
 ' References: 
   https://en.wikipedia.org/wiki/Cross-correlation
 '
+install.packages("Hmisc")
+library(Hmisc)
+test<- rcorr(as.matrix(ts.mtv))
+test
 ts.mtv.target <- data$SST
 
 # Iterate Columns - Calculate Correlation Between Each Column & Target
@@ -319,7 +344,7 @@ for (i in colnames(data[1:9])){
   cor.list[[i]] <- cor.n[1]
   
   }
-plot(cor.list)
+barplot(cor.list, main='Cross Correlation - Lvls 1-10 vs SST', xlab="Sea Level", ylab="Cross-Correlation")
 
-
+plot(data, data)
 
