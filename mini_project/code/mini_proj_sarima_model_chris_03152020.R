@@ -1,18 +1,5 @@
 # MINI PROJECT - SEA SURFACE TEMPERATURES --------------
-' Deliverables:
-
-  Additional Resources:
-  https://machinelearningmastery.com/sarima-for-time-series-forecasting-in-python/
-  https://machinelearningmastery.com/gentle-introduction-autocorrelation-partial-autocorrelation/
-  auto.arima:  https://towardsdatascience.com/time-series-analysis-with-auto-arima-in-r-2b220b20e8ab
-  
-  **Note:  https://www.youtube.com/watch?v=pPO5av4HD90 > The plot of the time series for 10-90 depths in this video
-           makes me think tha tthe reason that the time series from 10-90 looks more erratic as it gets closer to 
-           90 is that the light does penetrates less as those layers meaning that it will follow less and less the
-           patter of the layers at the top.  Therefore, we can make an educated guess or assumption at the outset of
-           out model that the deepest layers will have less of a relationship w/ our target variable. 
-  
-'
+'author:  Chris Cirelli'
 
 
 # Clear Namespace & Charts-------------------------------
