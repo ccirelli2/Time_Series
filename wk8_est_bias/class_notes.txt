@@ -1,0 +1,169 @@
+# Estimation Bias and Ommitted Variable ---------------------------------
+
+Panel Data		
+Estimation Bias		 
+Ommitted Variable	
+Random Effect
+Difference in differences
+
+
+
+Slide 3:  Basketball + / - values
+- 	Compare performance of the team when the player
+	is on and off the court. 
+-	If the difference is large, i.e. a large positive number. 
+-	Is this a good measurement?  We need to account for other
+	factors that may account for the score.  Ex: other opponents. 
+- 	If it is a home game or not. 
+-	Forming a regression setting, but with limitations due to
+	these other factors. 
+-	Purpose:  This is the example of the "ommitted variable setting". 
+
+
+Slide 4:	Evaluate Airbnb New Feature
+- 	Dl algorithm to improve photo's quality. 
+- 	Airbnb wants to evaluate the effect of the new model. 
+- 	Regress earnings onto a bunch of variables associated with the 
+ 	property.  Use B3 to measure the effect of the program.  
+	So one of your variables and coefficients to measure effect. 
+- 	There are some flaws as we are not controlling for the original
+	photo quality.  Also, who decided to use the new photos versus old. 
+- 	Study is not random as people choose which feature they do and don't use. 
+
+
+Slide 5: 	Estimation Bias
+-	Unbiased:	Means that the E(B1) should = or be close to B1
+-	Consisten:	Weaker threshold that the expectation of B1 will approach
+	actual B1 over a large dataset. 
+
+Slide 6: 	Estimation Bias
+-	I want to make sure there is no correlation between my 
+	X and error terms.  
+-	Probably one of the ommitted variables it the quality of the original 
+	photo, so that is part of my error term. 
+-	If X and error term are correlated, we are not good as there will be 
+	some effect of the error term on X. 
+-	Ref:  https://en.wikipedia.org/wiki/Bias_of_an_estimator
+
+Slide 7:	Sources of Estimation Bias
+-	Ommitted Variable Bias:  if ommitted variable is correlated with X. 
+-	Missing data and sample selection bias:  Not having a good source
+	of information.  So for example, you go to a single hospital 
+	and gather data, but its not random, its just from one hospital and
+	the people that elected to go to the hospital. 
+-	Measurement error:	Comes up in survey data.  Some people reply and
+	some don't.  The people that reply may be different from those that
+	didn't.  Also error in that the responders are filling in survey, you are 
+	not their personally recording the responses.   
+-	Simultaneous Causality bias:  In regression, X has an effect on Y, but
+	Y may also affect X.  Supply and demand is a great example.  
+	Supply and demand can be one directional, but maybe demand also
+	effects supply. 
+
+Slide 8:	Ommitted Variable Problem
+-	Regression setting.  
+-	c:	unobservable random variable.  sometimes due to lack of
+	measurement.  If c is uncorrelated with X, then we just add
+	c to our error term.  If, however, it is correlated with any
+	of the X, we will have a biased estimator. 
+
+Slide 9:	Remedies
+-	Fixed effect and random effect models. 
+-	Randomized control experiment:	not easy to do and costly. 
+-	Instrumental Variables:	
+
+Slide 10:	Panel Data & Cross Sectional vs Panel Data
+-	Cross Sectional Data:  Many different observations observed
+		at a specific time point.  Use N to denote the sample size. 
+		Ex: Survey data is cross sectional.  Ex GDP, populateion, rate of 
+		unemployemnt, end of 2018.  
+		Ex:  Closing prices of 20 different tech stocks on Dec 3rd, 2018. 
+-	Panel Data:  Usually referred to as longitudinal data.  We have
+		observations as multiple time points. 
+		Ex:  So for the same 20 stocks we have observations for 3 days. 
+-	Time Series:	One stock over a time series. You follow a single 
+		subject and you follow that over time. 
+-	Panel data is different as the time period is small and you have 
+		more than one variable. This is the difference between time series
+		and panel data.  Panel data you want your number of subjects to be 
+		large and the time period to be small. 
+
+Slide 12:	Panel Data & Ommitted Variable Problem
+-	Ommitted Variables:	Great example is thinking about things that you
+		can and can't measure.  So what if we are trying to predict 
+		salary.  Well, we can measure education, gender, years of exp, etc.
+		What we likely can't measure are thinking like talent, personality, 
+		beauty, etc.  These latter variables may influence the salary, but
+		we can't measure them accuratly.  
+		This is what is meant by the variable c.  It is considered constant
+		over time. 
+-	C:	Characteristic about me, and will be constant at all time periods. 
+		Key assumption of the model. 
+		yt = XtB + c + ut, t = 1,2,..
+-	Two Scenarios:
+		c is uncorrelated with any of the x's. Use ordinary least squared. 
+		c is correlated with x's.  If you just run OLS your prediction
+		will be inconsistent.  You need to eliminate the effect of c. 
+		How?	Take the difference of the two equations and c will 
+				be cancelled.  
+		Second model is called "fixed effect model"
+		First model is random effect model. 
+
+Slide 14	Unobserved Effect Model (UEM)
+- 	Summary of what we have learned so far. c we always refer to it as the
+	unobserved variable or heterogeneity. 
+	It is also called individual effect. 
+-	How to decide if c and x are correlated?  cov(xit, ci)
+
+Slide 16	Model 
+-	Test:  effect of job training on subsequent wages. 
+-	Treatment and control situation. 
+-	Questions:  Are the employees randomly selected?  If they are randomly
+		selected we do not have an estimation bias.  So we don't need to
+		worry about the unique characteristics of the employee?
+-	Second scenario: 	we only send the best performing employees to the 
+		program.  Now you have selection bias.  
+-	Now, do we think that this variable is correlated with X. What can be the
+		ci here for this scenario?  Ex: past performance.  Is this correlated?
+		yes, because in fact this is how they are being selected. 
+
+Slide 19:	Random Effect Model
+-	Allows you to utlize the c term to improve model. 
+-	Estimate covariance of error term, which is the actual error term
+	and the hidden characteristic of that subject. 
+-	What is the structure of the omega matrix?
+	It will be a two by two matrix.  First element cov vi and itself or var(vi)
+	On the diagonal you will have the variance of the two terms. 
+	On the off diagonal you will have the variance of only c.
+-	In practice how can you estimate the variance?
+	Run linear regression, get error term and calculate variance. 
+	sigma c^2?  How can you estimate.  Calculate the
+	correlation between the error term from time period 1 and time
+	period 2. 
+-	Estimating these values and constructing the correlation matrix helps
+	us to understand the structure of the error term. 
+-	Forumula for generalized least squared adds weights to X and Y to accomodate
+	for the correlation between c and x.  It is called random effect model. 
+-	Must have full rank in order to take inverse. 
+
+*Slide 24: Test Dependence
+-	If sigma c^2 is equal to zero there is not correlation between 
+	vi1 and vi2.  This tells us that the c does not vary.  If c is always
+	constant then it is not important. 
+
+
+Slide 26:	Fixed Effect Model
+-	X and c can be correlated.
+-	Requires less assumptions. 
+-	Only that X and the error terms are uncorrelated.
+
+
+Slide 27:	Between equation
+-	Why are we calculating the between and within equations?
+
+
+continue:	1:14:00  	
+
+
+
+
