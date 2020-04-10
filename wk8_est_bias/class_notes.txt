@@ -160,9 +160,77 @@ Slide 26:	Fixed Effect Model
 
 Slide 27:	Between equation
 -	Why are we calculating the between and within equations?
+-	For each subject you have multiple observations. The between 
+	equations you take the average of the multiple observations.
+	This gives you yi bar.  (is this for each time step?)
+-	Within Equation:  Essentially the difference between each individual
+	equation and the average.  The c will get cancelled after taking the average
+	and what is left is the average.  Compare each time period to the average to 
+	see how I am at time t compared to the average of time t. 
 
 
-continue:	1:14:00  	
+Slide 28:	How can we make use of these two equations to make estimates. 
+- 	Fixed effect model: c is correlated with X.  'c' cannot be part of the error term
+	so we need to treat it as a parameter. 
+-	For ecah subject we can calculate the between equation, which has the 'c' in it.
+	We can also calculate the within equation that does not have the 'c' in it. 
+-	Within equation we get of the 'c' variable.  We also know for within equation the
+	error terms and x are uncorrelated. 
+-	Using the within equation you can estimate the betas.
+-	The purpose of the between equation to estimate ci.  
+-	*Between equation:  Use to estimate the ci.  Subjet level fixed effect. 
+-	*Within equaton:	Estimate the effect coming from x. 
+-	C needs to be constant overtime, otherwise, when we take the difference c will not
+	be cancelled out. 
+
+Slide 32:	Fixed Effect
+-	Cannot include any variable that does not change over time. 
+	For instance, we cannot add gender as an additional variable as we already
+	have one constant, which is 'c'.  I guess the point is that we are trying
+	to measure the effect of 'c' and or correlation w/ the error term. 
+-	How should you choose between a random effect or fixed effect model?
+	For any model that you can run RE you can run FE. 
+	Fixed Effect model you have to estimate all of the ci terms. 
+-	Hausman Test:  When E(ciXit) = 0 is true, both RE and FE will provide
+	consistent results.  When it is not true, FE will only provide consistent
+	returns and the two estimators will be different.  
+
+
+Fixed Effect (explanation):
+- 	Video https://www.youtube.com/watch?v=sFvV9b1cGFc
+- 	Unobserved heterogenity and error is a composite error term. 
+- 	The issue is that the heterogenity term and the error term are correlated. 
+- 	This is a violation of the assumption for OLS in which the X and error are
+  	independent. 
+- 	Fixed effect model corrects this.  Take the time average of your independent variables. 
+	Ex: average house price across time. c is constant and does not change over time. 
+	In order to get the fixed effect estimator we subtract the equation with the average
+	from the original model with ci.  ci - ci = 0.
+- 	Fixed effect refers to first difference estimator?
+
+Random Effect Model (Explanation)
+-	https://www.youtube.com/watch?v=bQampZBzU9Q
+-	If cov(alpha i, xi) = 0, i.e. no overlap, 
+-	This may be the case where we believed that we have controlled for
+  	all those factors that are important for determining our dependent variable
+  	by including them in our model. 
+-	If this is the case, we can use OLS. 
+- 	We take out target and subtract out some value lambda and do the same to the other
+	side of the equation. 
+	H - lambda = Bo - lambda + B1 - lambda + B2 - ei - lambda. 
+-	If lambda = zero, then Random Effects = OLS. 
+-	If lambda = 1, Random Effects = Fixed Effects. 
+-	Typically lambda is between 0 and 1.  
+-	
+
+
+Slide 34:	Difference in Differences
+-	Take the differences of the treatment group before and after. 
+	How the number of employees change before and after the minimum wage law. 
+-	Take the differences for the control group before and after the law. 
+-	Can you use this difference to account for the difference in the law?
+-	Subtrack difference one from difference two. 
+-	
 
 
 
