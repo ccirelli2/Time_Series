@@ -87,6 +87,14 @@ Slide 10:	Panel Data & Cross Sectional vs Panel Data
 		more than one variable. This is the difference between time series
 		and panel data.  Panel data you want your number of subjects to be 
 		large and the time period to be small. 
+		
+		Ref:	https://en.wikipedia.org/wiki/Panel_data
+		Ref:https://www.researchgate.net/post/What_is_difference_between_cross-sectional_data_and_panel_data
+
+		- Cross Sectional Data:  GDP for three countries recorded for yr 2000. 
+		  "studying many subjects at the same point in time"
+		- Panel Data:	GDP for three countries recorded for yrs 2000-2003
+		  "studying many subjects over multiple periods of time"
 
 Slide 12:	Panel Data & Ommitted Variable Problem
 -	Ommitted Variables:	Great example is thinking about things that you
@@ -104,16 +112,20 @@ Slide 12:	Panel Data & Ommitted Variable Problem
 		c is uncorrelated with any of the x's. Use ordinary least squared. 
 		c is correlated with x's.  If you just run OLS your prediction
 		will be inconsistent.  You need to eliminate the effect of c. 
-		How?	Take the difference of the two equations and c will 
-				be cancelled.  
-		Second model is called "fixed effect model"
-		First model is random effect model. 
+		**How?	
+
+		Random Effect Model:
+		-	Take the difference of the two equations and c will 
+			be cancelled.  
+		fixed effect model:
+		-	Second model is called "fixed effect model"
+		 
 
 Slide 14	Unobserved Effect Model (UEM)
 - 	Summary of what we have learned so far. c we always refer to it as the
 	unobserved variable or heterogeneity. 
 	It is also called individual effect. 
--	How to decide if c and x are correlated?  cov(xit, ci)
+-	**How to decide if c and x are correlated?  cov(xit, ci)
 
 Slide 16	Model 
 -	Test:  effect of job training on subsequent wages. 
@@ -142,7 +154,7 @@ Slide 19:	Random Effect Model
 	period 2. 
 -	Estimating these values and constructing the correlation matrix helps
 	us to understand the structure of the error term. 
--	Forumula for generalized least squared adds weights to X and Y to accomodate
+-	**Forumula for generalized least squared adds weights to X and Y to accomodate
 	for the correlation between c and x.  It is called random effect model. 
 -	Must have full rank in order to take inverse. 
 

@@ -1,0 +1,144 @@
+
+# Models For Count Data _______________________________________________________
+
+- 	So far all models have been focused on continuous variables. 
+- 	Todety we are going to talk about models for when the variables are
+	descrete. 
+	Ex:	Binary variables. 
+		Count data. 
+
+
+
+# Count Variable ------------------------------------------------------------
+
+Models:
+-	Poisson Regression:  Most common model.  Models the count based on 
+	a poisson distribution.  It cannot account for overdispersion and 
+	zero-inflation. 
+-	Zero-Inflation model
+-	Hurdle Model
+
+
+Data Types of Descrete Variables:
+-	Categorical:
+		variable is the most common.  Yes No is both binary and 
+		categorical.  Other examples include different brand names.
+		Types of animals, etc. 
+-	If there are only two categories, we can use Logistic Regression. 
+-	If there are more than two, we can use the Choice Model.
+
+-	Ordinal Variable:	Can be ordered in a meaningful way. 
+		Ex: the size of a teacher.  Small, medium and large. 
+		Also, count data is also ordinal.  Count of times. 
+		It can be any non-negative integers. 
+		Models:  Ordered Choice Model
+
+
+Examples of Count Data:
+-	Number of insurance claims a person file per year. Always 
+	happening on a fixed time period.  
+-	Number of hospital admissions for a given person per year. 	
+-	Number of jumps in stock returns per day.  Fixed time period is
+	day.
+
+Linear Regression:
+-	We assume a normal distribution of y given x. y|x ~ N(xT B, sigma^2)
+-	Link function?
+-	Linear model only make sense if y is continuous because the normal dist
+	is continuous. 
+
+General Linear Model:
+-	What is the conditional distribution?   
+-	We generalize the linear model to extending it to a more 
+	general distribution group and extend the link to 
+	a more general relationship g(mu) = ni. 
+
+Logistic Regression:
+-	One type of the generalized linear model. 
+-	It extends the conditional distribution y|x from normal to bernoulli. 
+-	Link is through a logit function.  log(mu / (1-mu))
+-	mu is equal to the expectation which is equal to P(y=0) = 1-p
+-	p(y=1) = p
+-	E(y) = p
+-		
+
+Family of GLM Models
+	Family		link
+-	binomial	logit
+-	gaussian 	
+-	poisson
+
+
+
+
+Poisson Distribution:
+-	Model use for counts. 
+-	Ex:  Model the number of arrivals within a given time period. 
+-	Ex:	Number of phone calls per hour. 
+-	P(X =k) = lambda^k * e ^ -lambda / k!
+	Lambda = arrival rate.  P(X=k) is the expected value of X. 
+-	As lambda increased the number of X increases. 
+-	Mean and Variance of a poisson distribution is equal to lambda. 
+
+
+Example Poisson Regression:
+-	Cross-section data of 2,000 registered boat owners. 
+-	Ask them the number of trips per boat. 
+-	Also collected a number of covariates. 
+-	Model conditional distribution of y|x given a poisson dist. 
+-	We need to specify the link between the mu, which is the exp(eta). 
+-	To answer the question about the link, lets look at the logistic regression 
+	function.  
+-	We take the logorithm of the mu.
+
+
+
+Part II --------------------------------------------------------------
+
+
+Review:
+-	Poisson cannot handle over dispersion of data, and
+-	Zero inflation. 
+-	Both variance and expectation are equal to lambda. Both are the same. 
+-	Only when this is a valid assumption will a poisson dist be a good model. 
+-	If the level of variation or spread is higher than the mean over dispersion exists. 
+-	The same applies to Poisson Regression because the assumptions are the same. 
+
+Overdispersion:
+-	We can test for overspiersion. 
+-	Var(yi|xi) = (1 + alpha)mu = dispersion * mu.
+-	R package AER you can conduct this analysis.  It makes the detection of overdispersion
+	very simple. 
+-	pass regression result to dispersiontest()
+-	Check the P-value.  If small, you reject the null-hypothesis. 
+-	Null alpha = 0.  Conclude that there is enough evidence to support that alpha
+	is greater than zero. 
+-	Function also outputs the dispersion factor.  If result = 7, then variance is
+	7x greater than mean. 
+
+Model For Over Dispersion - Negative Binomial Distribution
+-	f(y: mu, theta): theta controls the over dispersion. 
+-	Poisson is just a special case where theta equals zero. 
+-	eta symbol.  need to look this up and how to fit it.
+-	Also look up "link functions". 
+
+
+Zero Inflation:
+-	Look at histogram. 
+-	In the presentation, the count for 0 is significantly hire than you would
+	expect to find in a poisson distributon.  
+-	Zero Inflation Model (ZAM):  Mixture distribution, try to model the 0's and 1's
+	seperately. 
+-	R function is zeroinfl(trips ~ . | quality + income, data=, dist='')
+
+Hurdle Model:
+-	How do we determine if the value is 0 or 1?
+-	Part II of Zero inflation model assumes that there is a probability that 
+	the answer could be 0.  Hurdle model has a complete distinction and in part II
+	there is no probability of 0. 
+-	Hurdle model is used more frequently. 
+
+Model Check:
+-	Check actual counts versus predicted charts and get percentages correct. 
+-	
+
