@@ -3,7 +3,8 @@
           Objective is to predict the count of Auto Thefts over time.
           Time will be measured using the Occurance Date and Occurance Time
 	Ref: https://www.analyticsvidhya.com/blog/2018/05/generate-accurate-forecasts-facebook-prophet-python-r/
-  Ref: https://www.statmethods.net/advstats/timeseries.html
+  Ref: https://www.statmethods.net/advstats/timeseries.html 
+       - Seasonal decomposition
 '
 
 ## Clear Namespace --------------------------------------------------
@@ -14,6 +15,7 @@ source('/home/cc2/Desktop/repositories/Time_Series/final_project/data/data_inspe
 library(dplyr)
 library(ggplot2)
 library(astsa)
+library(forecast)
 
 ## Load Data --------------------------------------------------------
 ' data source:  http://opendataportal.azurewebsites.us/
@@ -72,14 +74,35 @@ plt.day   <- ggplot(day.cnt, aes(x=Day, y=n)) + geom_bar(stat='identity') + ggti
 plt.hour  <- ggplot(hour.cnt, aes(x=Hour, y=n)) + geom_bar(stat='identity') + ggtitle("Count of Auto Thefts By Hour")
 
 
+# Seasonality ---------------------------------------------------------------------------------------------
+ts.date.cnt <- ts(date.cnt$n, start=c(2009, 01 ,01), end=c(2019, 12,31), frequency=31)
+ggseasonplot(ts.date.cnt, main='Seasonal Plot - AutoTheft - Frequency =31')
+
+# Take Difference to remove trend -------------------------------------------------------------------------
+date.cnt.diff <- diff(date.cnt$n, 1)
+ts.date.cnt.diff <- ts(date.cnt.diff, start=c(2009, 01 ,01), end=c(2019, 12,31), frequency=12)
+ggseasonplot(ts.date.cnt.diff, main='Seasonal Plot - AutoTheft - Frequency =31')
+plot(y=date.cnt.diff, x=seq(1, length(date.cnt.diff)), 'l', main='Plot of Daily Time Series - Differencing of 1')
+
+# Apply Smoothing to Differenced Time Series
+' Mean & Variance are clearly not constant'
+date.cnt.diff <- diff(date.cnt$n, 1)
+ts.date.cnt.diff.smooth <- ts(date.cnt.diff.smoothed, start=c(2009, 01 ,01), end=c(2019, 12,31), frequency=31)
+ggseasonplot(ts.date.cnt.diff.smooth, main='Seasonal Plot | AutoTheft | Frequency =12')
+
+plot(x=seq(1,length(month.cnt$n)), y=month.cnt$n, 'l')
+mu_cnt.month <- month.cnt$n/31
+plot(x=seq(1,12), y=(mu_cnt.month))
+
 
 # Stationarity - ACF & PACF Plots -------------------------------------------------------------------------
 
-head(date.cnt)
-tail(date.cnt)
 acf(date.cnt$n)
 pacf(date.cnt$n)
 acf2(date.cnt$n)
+
+acf(date.cnt.diff)
+acf2(date.cnt.diff)
 
 
 # Create Time Series
