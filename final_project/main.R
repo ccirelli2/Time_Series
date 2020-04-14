@@ -89,10 +89,23 @@ plot(y=date.cnt.diff, x=seq(1, length(date.cnt.diff)), 'l', main='Plot of Daily 
 date.cnt.diff <- diff(date.cnt$n, 1)
 ts.date.cnt.diff.smooth <- ts(date.cnt.diff.smoothed, start=c(2009, 01 ,01), end=c(2019, 12,31), frequency=31)
 ggseasonplot(ts.date.cnt.diff.smooth, main='Seasonal Plot | AutoTheft | Frequency =12')
-
 plot(x=seq(1,length(month.cnt$n)), y=month.cnt$n, 'l')
+
+# Average Monthly Count By All Years
 mu_cnt.month <- month.cnt$n/31
 plot(x=seq(1,12), y=(mu_cnt.month))
+
+# Average Daily Count By All Years
+mu_cnt.day <- day.cnt$n/31
+plot(x=seq(1,31), y=(mu_cnt.day))
+
+# Observations 
+' Trend
+  Seasonality
+  Cyclicality
+  Holidays
+
+'
 
 
 # Stationarity - ACF & PACF Plots -------------------------------------------------------------------------
