@@ -3,6 +3,7 @@
           Objective is to predict the count of Auto Thefts over time.
           Time will be measured using the Occurance Date and Occurance Time
 	Ref: https://www.analyticsvidhya.com/blog/2018/05/generate-accurate-forecasts-facebook-prophet-python-r/
+  Ref: https://www.statmethods.net/advstats/timeseries.html
 '
 
 ## Clear Namespace --------------------------------------------------
@@ -12,6 +13,7 @@ rm(list=ls())
 source('/home/cc2/Desktop/repositories/Time_Series/final_project/data/data_inspection.R')
 library(dplyr)
 library(ggplot2)
+library(astsa)
 
 ## Load Data --------------------------------------------------------
 ' data source:  http://opendataportal.azurewebsites.us/
@@ -49,7 +51,6 @@ data.at$Month      <- format(as.Date(data.at$Occur.Date, '%Y-%m-%d'), "%m")
 data.at$Day        <- format(as.Date(data.at$Occur.Date, '%Y-%m-%d'), "%d")
 data.at$Hour       <- substr(data.at$Occur.Time, 1,2)
 data.at$Count      <- rep(1, length(data.at$Year))
-data.at$Occur.Date <- NULL
 data.at$Occur.Time <- NULL
 col_names <- names(data.at)
 min.yr             <- data.at$Year > 2008
@@ -57,15 +58,33 @@ data.at            <- data.at[min.yr, names(data.at)]
 min(data.at$Year)
 summary(data.at)
 
+
 # Plot Data
+date.cnt  <- data.at %>% group_by(Occur.Date) %>% tally()
 yr.cnt    <- data.at %>% group_by(Year) %>% tally()
 month.cnt <- data.at %>% group_by(Month) %>% tally()
 day.cnt   <- data.at %>% group_by(Day) %>% tally()
 hour.cnt  <- data.at %>% group_by(Hour) %>% tally()
+plt.date  <- ggplot(date.cnt, aes(x=Occur.Date, y=n)) + geom_bar(stat='identity') + ggtitle("Count of Auto Thefts By Date")
 plt.yr    <- ggplot(yr.cnt, aes(x=Year, y=n)) + geom_bar(stat='identity') + ggtitle("Count of Auto Thefts By Year")
 plt.month <- ggplot(month.cnt, aes(x=Month, y=n)) + geom_bar(stat='identity') + ggtitle("Count of Auto Thefts By Month")
 plt.day   <- ggplot(day.cnt, aes(x=Day, y=n)) + geom_bar(stat='identity') + ggtitle("Count of Auto Thefts By Day")
 plt.hour  <- ggplot(hour.cnt, aes(x=Hour, y=n)) + geom_bar(stat='identity') + ggtitle("Count of Auto Thefts By Hour")
+
+
+
+# Stationarity - ACF & PACF Plots -------------------------------------------------------------------------
+
+head(date.cnt)
+tail(date.cnt)
+acf(date.cnt$n)
+pacf(date.cnt$n)
+acf2(date.cnt$n)
+
+
+# Create Time Series
+#ts.date.cnt <- ts(date.cnt$n, start=c(2009, 01 ,01), end=c(2019, 12,31))
+
 
 
 
